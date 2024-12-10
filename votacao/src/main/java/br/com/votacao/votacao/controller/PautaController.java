@@ -1,5 +1,7 @@
 package br.com.votacao.votacao.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import br.com.votacao.votacao.model.Pauta;
 import br.com.votacao.votacao.service.PautaService;
@@ -18,6 +20,7 @@ import java.util.List;
  */
 
 @RestController
+// @RequestMapping("/pautas")
 @RequestMapping("/api/pautas")
 public class PautaController {
     private final PautaService pautaService;
@@ -34,5 +37,10 @@ public class PautaController {
     @GetMapping
     public List<Pauta> listarPautas() {
         return pautaService.listarPautas();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

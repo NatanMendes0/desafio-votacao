@@ -1,17 +1,24 @@
 package br.com.votacao.votacao.service;
 
-import br.com.votacao.votacao.repository.VotoRepository;
 import br.com.votacao.votacao.model.Voto;
+import br.com.votacao.votacao.model.enums.TipoVoto;
+import br.com.votacao.votacao.repository.VotoRepository;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 /**
  * Serviço responsável pela lógica de votação.
  * 
- * Este serviço fornece métodos para registrar votos e contar votos em uma determinada pauta.
+ * Este serviço fornece métodos para registrar votos e contar votos em uma
+ * determinada pauta.
  * 
  * Métodos:
- * - votar(Voto voto): Registra um voto, verificando se o associado já votou na pauta.
- * - contarVotos(String pautaId, boolean voto): Conta o número de votos em uma pauta específica, filtrando por tipo de voto (sim ou não).
+ * - votar(Voto voto): Registra um voto, verificando se o associado já votou na
+ * pauta.
+ * - contarVotos(String pautaId, boolean voto): Conta o número de votos em uma
+ * pauta específica, filtrando por tipo de voto (sim ou não).
  * 
  * Dependências:
  * - VotoRepository: Repositório para acesso aos dados de votos.
@@ -27,12 +34,21 @@ public class VotoService {
 
     public Voto votar(Voto voto) {
         if (votoRepository.existsByPautaIdAndAssociadoId(voto.getPautaId(), voto.getAssociadoId())) {
-            throw new RuntimeException("Associado já votou nesta pauta.");
+            throw new IllegalArgumentException("Associado ja votou nesta pauta!");
         }
         return votoRepository.save(voto);
     }
 
-    public long contarVotos(String pautaId, boolean voto) {
-        return votoRepository.countByPautaIdAndVoto(pautaId, voto);
+    public long contarVotos(String pautaId, TipoVoto tipoVoto) {
+        return votoRepository.countByPautaIdAndVoto(pautaId, tipoVoto);
+    }
+
+    public String obterNomePauta(String pautaId) {
+        Optional<String> nomePauta = votoRepository.findNomePautaById(pautaId);
+        if (nomePauta.isPresent()) {
+            return nomePauta.get();
+        } else {
+            throw new IllegalArgumentException("Pauta não encontrada!");
+        }
     }
 }

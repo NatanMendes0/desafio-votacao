@@ -2,6 +2,10 @@ package br.com.votacao.votacao.controller;
 
 import br.com.votacao.votacao.service.VotoService;
 import br.com.votacao.votacao.model.Voto;
+import br.com.votacao.votacao.model.enums.TipoVoto;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -14,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping("/votos")
+@RequestMapping("/api/votos")
 public class VotoController {
     private final VotoService votoService;
 
@@ -29,8 +33,17 @@ public class VotoController {
 
     @GetMapping("/{pautaId}/resultado")
     public String contarVotos(@PathVariable String pautaId) {
-        long votosSim = votoService.contarVotos(pautaId, true);
-        long votosNao = votoService.contarVotos(pautaId, false);
-        return "Resultado: Sim = " + votosSim + ", Não = " + votosNao;
+        long votosSim = votoService.contarVotos(pautaId, TipoVoto.SIM);
+        long votosNao = votoService.contarVotos(pautaId, TipoVoto.NAO);
+        // return "Resultado: Sim = " + votosSim + ", Não = " + votosNao;
+        // return "Resultado: da pauta No." + pautaId + " Sim = " + votosSim + ", Não = " + votosNao;
+        String nomePauta = votoService.obterNomePauta(pautaId);
+        return "Resultado da pauta \"" + nomePauta + "\": Sim = " + votosSim + ", Não = " + votosNao;
+        
+    }   
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

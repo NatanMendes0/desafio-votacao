@@ -2,6 +2,8 @@ package br.com.votacao.votacao.service;
 
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import br.com.votacao.votacao.model.Sessao;
 import br.com.votacao.votacao.repository.SessaoRepository;
 
@@ -18,6 +20,7 @@ import br.com.votacao.votacao.repository.SessaoRepository;
  * Métodos:
  * - abrirSessao(String pautaId, Integer duracaoEmMinutos): Abre uma nova sessão de votação
  *   para a pauta especificada, com a duração informada.
+ * - listarSessoesAbertas(): Lista todas as sessões de votação abertas com base no horário.
  */
 @Service
 public class SessaoService {
@@ -33,5 +36,11 @@ public class SessaoService {
         sessao.setInicio(LocalDateTime.now());
         sessao.setFim(LocalDateTime.now().plusMinutes(duracaoEmMinutos != null ? duracaoEmMinutos : 1));
         return sessaoRepository.save(sessao);
+    }
+
+    public List<Sessao> listarSessoesAbertas() {
+        return sessaoRepository.findAll().stream()
+                .filter(sessao -> sessao.getFim().isAfter(LocalDateTime.now()))
+                .toList();
     }
 }
