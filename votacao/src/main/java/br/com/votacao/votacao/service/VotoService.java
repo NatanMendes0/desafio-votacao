@@ -1,7 +1,9 @@
 package br.com.votacao.votacao.service;
 
+import br.com.votacao.votacao.model.Pauta;
 import br.com.votacao.votacao.model.Voto;
 import br.com.votacao.votacao.model.enums.TipoVoto;
+import br.com.votacao.votacao.repository.PautaRepository;
 import br.com.votacao.votacao.repository.VotoRepository;
 
 import java.util.Optional;
@@ -27,9 +29,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class VotoService {
     private final VotoRepository votoRepository;
+    private final PautaRepository pautaRepository;
 
-    public VotoService(VotoRepository votoRepository) {
+    public VotoService(VotoRepository votoRepository, PautaRepository pautaRepository) {
         this.votoRepository = votoRepository;
+        this.pautaRepository = pautaRepository;
     }
 
     public Voto votar(Voto voto) {
@@ -44,9 +48,9 @@ public class VotoService {
     }
 
     public String obterNomePauta(String pautaId) {
-        Optional<String> nomePauta = votoRepository.findNomePautaById(pautaId);
+        Optional<Pauta> nomePauta = pautaRepository.findById(pautaId);
         if (nomePauta.isPresent()) {
-            return nomePauta.get();
+            return nomePauta.get().getTitulo();
         } else {
             throw new IllegalArgumentException("Pauta não encontrada!");
         }

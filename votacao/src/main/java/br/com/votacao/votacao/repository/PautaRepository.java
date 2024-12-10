@@ -9,4 +9,5 @@ import br.com.votacao.votacao.model.Pauta;
  * Esta interface estende MongoRepository, fornecendo métodos CRUD para a entidade Pauta.
  */
 
-public interface PautaRepository extends MongoRepository<Pauta, String> {}
+public interface PautaRepository extends MongoRepository<Pauta, String> {
+}
