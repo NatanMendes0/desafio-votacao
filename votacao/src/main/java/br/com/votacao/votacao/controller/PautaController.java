@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/pautas")
+@RequestMapping("/api/pautas")
 public class PautaController {
     private final PautaService pautaService;
 
